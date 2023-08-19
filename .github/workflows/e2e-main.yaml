@@ -1,0 +1,16 @@
+name: Cypress E2E Tests
+on:
+  workflow_dispatch:
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    name: E2E
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Cypress test
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          headed: false
