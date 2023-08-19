@@ -1,6 +1,11 @@
 name: Cypress E2E Tests
 on:
   workflow_dispatch:
+    inputs:
+      tags:
+        description: "Which tests you wants to run"
+        default: "@smoke"
+        required: true
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
@@ -14,3 +19,4 @@ jobs:
         with:
           browser: chrome
           headed: false
+          env: grepTags=${{ inputs.tags }}
