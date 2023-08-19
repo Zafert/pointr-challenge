@@ -21,20 +21,27 @@ jobs:
           headed: false
           env: grepTags=${{ inputs.tags }}
 
-      - name: Generate allure report
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        id: allure-report
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
         with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
+          name: cypress-allure-results
+          path: allure-results
+          if-no-files-found: ignore
 
-      - name: Deploy report to Branch
-        if: always()
-        uses: peaceiris/actions-gh-pages@v2
-        env:
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history
+    #   - name: Generate allure report
+    #     uses: simple-elf/allure-report-action@master
+    #     if: always()
+    #     id: allure-report
+    #     with:
+    #       allure_results: allure-results
+    #       gh_pages: gh-pages
+    #       allure_report: allure-report
+    #       allure_history: allure-history
+
+    #   - name: Deploy report to Branch
+    #     if: always()
+    #     uses: peaceiris/actions-gh-pages@v2
+    #     env:
+    #       PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #       PUBLISH_BRANCH: gh-pages
+    #       PUBLISH_DIR: allure-history
