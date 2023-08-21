@@ -2,6 +2,8 @@ import { defineConfig } from "cypress";
 
 const allureWriter = require("@shelex/cypress-allure-plugin/writer");
 
+const cypressSplit = require("cypress-split");
+
 export default defineConfig({
   fixturesFolder: "cypress/fixtures",
   video: false,
@@ -32,6 +34,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       allureWriter(on, config);
       require("@bahmutov/cy-grep/src/plugin")(config);
+      cypressSplit(on, config);
       return config;
     },
     baseUrl: "https://www.joyn.de/",
