@@ -5,12 +5,12 @@ const homePageSelectors = {
 
 export class HomePage {
   static visitHomePage() {
-    cy.allure().logStep("visit home page");
+    cy.step("visit home page");
     cy.visit("/");
   }
 
   static verifyHomePageElements() {
-    cy.allure().logStep("verify home page elements");
+    cy.step("verify home page elements");
     cy.get(homePageSelectors.plusButton).should("be.visible");
     cy.get(homePageSelectors.accountButton).should("be.visible");
   }

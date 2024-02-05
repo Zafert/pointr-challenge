@@ -1,6 +1,8 @@
 import { defineConfig } from "cypress";
 
-const allureWriter = require("@shelex/cypress-allure-plugin/writer");
+const {
+  configureAllureAdapterPlugins,
+} = require("@mmisty/cypress-allure-adapter/plugins");
 
 const cypressSplit = require("cypress-split");
 
@@ -24,15 +26,12 @@ export default defineConfig({
   env: {
     allure: true,
     allureResultsPath: "allure-results",
-    allureLogCypress: true,
-    allureAttachRequests: false,
-    allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
   },
   e2e: {
     setupNodeEvents(on, config) {
-      allureWriter(on, config);
+      configureAllureAdapterPlugins(on, config);
       require("@bahmutov/cy-grep/src/plugin")(config);
       cypressSplit(on, config);
       return config;
