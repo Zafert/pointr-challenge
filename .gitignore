@@ -1,2 +1,10 @@
 node_modules
 allure-results
+allure-report/
+cypress/downloads/
+cypress/videos/
+cypress/screenshots/
+.env
+.env.local
+.DS_Store
+*.log
