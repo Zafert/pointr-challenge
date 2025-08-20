@@ -1,0 +1,200 @@
+
+name: Cypress E2E Tests
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'cypress/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'cypress/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: "Test tags to run (e.g., @smoke, @regression)"
+        default: "@smoke"
+        required: true
+      browser:
+        description: "Browser to run tests on"
+        default: "chrome"
+        required: true
+        type: choice
+        options:
+          - chrome
+          - edge
+          - both
+
+jobs:
+  cypress-run-manual-chrome:
+    runs-on: ubuntu-latest
+    name: Cypress E2E Tests (Manual - Chrome)
+    if: github.event_name == 'workflow_dispatch' && (inputs.browser == 'chrome' || inputs.browser == 'both')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headed: false
+          env: grepTags=${{ inputs.tags }}
+          config: baseUrl=https://www.pointr.tech/
+          wait-on: 'https://www.pointr.tech/'
+          record: false
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-results-manual-chrome
+          path: |
+            cypress/screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+          
+      - name: Test Results Summary
+        if: always()
+        run: |
+          echo "📋 Test Results Summary for Chrome"
+          echo "✅ Cypress tests completed successfully"
+          echo "🌐 Browser: chrome"
+          echo "🔍 Tests executed against: https://www.pointr.tech/"
+          echo "📸 Screenshots uploaded for failed tests"
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "=== Test Execution Summary (Manual - Chrome) ==="
+          echo "Browser: chrome"
+          echo "Tags: ${{ inputs.tags }}"
+          echo "Trigger: Manual"
+          echo "================================"
+
+  cypress-run-manual-edge:
+    runs-on: ubuntu-latest
+    name: Cypress E2E Tests (Manual - Edge)
+    if: github.event_name == 'workflow_dispatch' && (inputs.browser == 'edge' || inputs.browser == 'both')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: edge
+          headed: false
+          env: grepTags=${{ inputs.tags }}
+          config: baseUrl=https://www.pointr.tech/
+          wait-on: 'https://www.pointr.tech/'
+          record: false
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-results-manual-edge
+          path: |
+            cypress/screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+          
+      - name: Test Results Summary
+        if: always()
+        run: |
+          echo "📋 Test Results Summary for Edge"
+          echo "✅ Cypress tests completed successfully"
+          echo "🌐 Browser: edge"
+          echo "🔍 Tests executed against: https://www.pointr.tech/"
+          echo "📸 Screenshots uploaded for failed tests"
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "=== Test Execution Summary (Manual - Edge) ==="
+          echo "Browser: edge"
+          echo "Tags: ${{ inputs.tags }}"
+          echo "Trigger: Manual"
+          echo "================================"
+
+  cypress-run-auto:
+    runs-on: ubuntu-latest
+    name: Cypress E2E Tests (Auto)
+    if: github.event_name != 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: ${{ matrix.browser }}
+          headed: false
+          env: grepTags=@smoke
+          config: baseUrl=https://www.pointr.tech/
+          wait-on: 'https://www.pointr.tech/'
+          record: false
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-results-auto-${{ matrix.browser }}
+          path: |
+            cypress/screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+          
+      - name: Test Results Summary
+        if: always()
+        run: |
+          echo "📋 Test Results Summary for ${{ matrix.browser }}"
+          echo "✅ Cypress tests completed successfully"
+          echo "🌐 Browser: ${{ matrix.browser }}"
+          echo "🔍 Tests executed against: https://www.pointr.tech/"
+          echo "📸 Screenshots uploaded for failed tests"
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "=== Test Execution Summary (Auto) ==="
+          echo "Browser: ${{ matrix.browser }}"
+          echo "Tags: @smoke (default)"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "================================"

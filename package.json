@@ -1,0 +1,26 @@
+{
+  "name": "fe-automation",
+  "version": "1.0.0",
+  "description": "This is a Tempory fe automation project",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run --browser chrome --headed --env grepTags=@smoke",
+    "test:chrome": "cypress run --browser chrome",
+    "test:edge": "cypress run --browser edge",
+    "cypress:open": "cypress open",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:open": "allure open",
+    "allure:serve": "allure serve allure-results",
+    "allure:report": "allure generate allure-results --clean && allure open"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@bahmutov/cy-grep": "^1.9.16",
+    "@mmisty/cypress-allure-adapter": "0.16.2",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "cypress": "^14.5.4"
+  }
+}
